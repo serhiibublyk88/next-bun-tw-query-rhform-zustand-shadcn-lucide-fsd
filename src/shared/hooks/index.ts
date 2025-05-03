@@ -1,2 +1,2 @@
 export * from './use-toast';
-export * from './useConfirmDelete';
+export * from '../../widgets/confirm-delete-modal/model/useConfirmDelete';

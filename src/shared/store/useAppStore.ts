@@ -12,6 +12,11 @@ interface AppState {
   editableCar: Car | null;
   openEditCarModal: (car: Car) => void;
   closeEditCarModal: () => void;
+
+  // Модалка логина
+  isLoginModalOpen: boolean;
+  openLoginModal: () => void;
+  closeLoginModal: () => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -25,4 +30,9 @@ export const useAppStore = create<AppState>((set) => ({
   editableCar: null,
   openEditCarModal: (car) => set({ isEditCarModalOpen: true, editableCar: car }),
   closeEditCarModal: () => set({ isEditCarModalOpen: false, editableCar: null }),
+
+  // Логин
+  isLoginModalOpen: false,
+  openLoginModal: () => set({ isLoginModalOpen: true }),
+  closeLoginModal: () => set({ isLoginModalOpen: false }),
 }));

@@ -1,3 +1,4 @@
 // src/widgets/index.ts
-export { Header } from './header/Header';
-// export { CarList } from './car-list';
+export { CarList } from './car-list';
+export { ConfirmDeleteModal } from './confirm-delete-modal';
+export { Header } from './header';

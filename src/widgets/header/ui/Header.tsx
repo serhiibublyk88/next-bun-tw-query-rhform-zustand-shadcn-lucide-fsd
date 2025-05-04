@@ -8,7 +8,7 @@ import { usePathname } from 'next/navigation';
 export const Header = () => {
   const user = useUser();
   const { logout } = useAuth();
-  const { openAddCarModal } = useAppStore();
+  const { openAddCarModal, openLoginModal } = useAppStore();
   const pathname = usePathname();
 
   const isAdmin = user?.role === 'ADMIN';
@@ -36,7 +36,7 @@ export const Header = () => {
             </Button>
           </>
         ) : (
-          <Button onClick={() => console.log('TODO: open login modal')}>Login</Button>
+          <Button onClick={openLoginModal}>Login</Button>
         )}
       </div>
     </header>

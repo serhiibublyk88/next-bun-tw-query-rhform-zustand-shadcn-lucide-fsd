@@ -1,19 +1,19 @@
+import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
 
 import { carApi } from '@/shared/api';
 import { formatPrice } from '@/shared/lib';
 import { Card } from '@/shared/ui';
 
-interface CarPageProps {
-  params: { id?: string };
-}
+type Props = {
+  params: { id: string };
+};
 
-export async function generateMetadata({ params }: CarPageProps): Promise<Metadata> {
-  if (!params.id) return { title: 'Auto nicht gefunden' };
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const { id } = props.params;
 
-  const car = await carApi.getById(params.id).catch(() => null);
+  const car = await carApi.getById(id).catch(() => null);
 
   return {
     title: car?.name ?? 'Auto nicht gefunden',
@@ -21,10 +21,10 @@ export async function generateMetadata({ params }: CarPageProps): Promise<Metada
   };
 }
 
-export default async function CarPage({ params }: CarPageProps) {
-  if (!params.id) notFound();
+export default async function CarPage(props: Props) {
+  const { id } = props.params;
 
-  const car = await carApi.getById(params.id).catch(() => null);
+  const car = await carApi.getById(id).catch(() => null);
   if (!car) notFound();
 
   return (

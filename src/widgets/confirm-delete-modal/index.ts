@@ -1,2 +1,2 @@
-export * from './ui/ConfirmDeleteModal';
-export * from './model/useConfirmDelete';
+export { ConfirmDeleteModal } from './ui/ConfirmDeleteModal';
+export { useConfirmDelete } from './model/useConfirmDelete';

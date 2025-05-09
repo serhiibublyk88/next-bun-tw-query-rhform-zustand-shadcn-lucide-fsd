@@ -1,7 +1,7 @@
 import { authApi } from '@/shared/api/authApi';
 import { User } from '@/shared/types';
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 
 interface AuthState {
   user: User | null;
@@ -13,36 +13,42 @@ interface AuthState {
 
 export const useAuth = create<AuthState>()(
   devtools(
-    (set) => ({
-      user: null,
-      isLoading: false,
-      error: null,
+    persist(
+      (set) => ({
+        user: null,
+        isLoading: false,
+        error: null,
 
-      login: async (email, password) => {
-        set({ isLoading: true, error: null });
-        try {
-          const user = await authApi.login({ email, password });
-          set({ user });
-        } catch (error: unknown) {
-          const errorMessage =
-            error instanceof Error
-              ? error.message
-              : 'Login fehlgeschlagen. Bitte überprüfen Sie Ihre Daten.';
-          set({ error: errorMessage });
-          throw error;
-        } finally {
-          set({ isLoading: false });
-        }
-      },
+        login: async (email, password) => {
+          set({ isLoading: true, error: null });
+          try {
+            const user = await authApi.login({ email, password });
+            set({ user });
+          } catch (error: unknown) {
+            const errorMessage =
+              error instanceof Error
+                ? error.message
+                : 'Login fehlgeschlagen. Bitte überprüfen Sie Ihre Daten.';
+            set({ error: errorMessage });
+            throw error;
+          } finally {
+            set({ isLoading: false });
+          }
+        },
 
-      logout: async () => {
-        try {
-          await authApi.logout();
-        } finally {
-          set({ user: null });
-        }
+        logout: async () => {
+          try {
+            await authApi.logout();
+          } finally {
+            set({ user: null });
+          }
+        },
+      }),
+      {
+        name: 'auth-storage',
+        partialize: (state) => ({ user: state.user }),
       },
-    }),
+    ),
     { name: 'auth-store' },
   ),
 );

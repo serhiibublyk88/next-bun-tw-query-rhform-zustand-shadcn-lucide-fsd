@@ -1,5 +1,5 @@
-import { apiClient } from './client';
 import { User } from '@/shared/types';
+import { apiClient } from './client';
 
 interface LoginPayload {
   email: string;
@@ -7,11 +7,19 @@ interface LoginPayload {
 }
 
 export const authApi = {
-  login: async (data: LoginPayload): Promise<User> => {
-    const res = await apiClient.post('/auth/login', data);
-    return res.data;
+  login: async ({ email, password }: LoginPayload): Promise<User> => {
+    const res = await apiClient.get<User[]>('/users', {
+      params: { email, password },
+    });
+
+    if (!res.data.length) {
+      throw new Error('Ungültige Zugangsdaten');
+    }
+
+    return res.data[0];
   },
+
   logout: async (): Promise<void> => {
-    await apiClient.post('/auth/logout');
+    return;
   },
 };

@@ -1,4 +1,13 @@
 {
+  "users": [
+    {
+      "id": "1",
+      "email": "admin@admin.de",
+      "password": "adminadmin",
+      "role": "ADMIN",
+      "name": "Admin"
+    }
+  ],
   "cars": [
     {
       "id": "1",

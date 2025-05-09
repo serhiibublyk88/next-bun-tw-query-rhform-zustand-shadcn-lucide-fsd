@@ -1,12 +1,12 @@
 'use client';
 
+import { Pencil, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Pencil, Trash2 } from 'lucide-react';
 
 import { useUser } from '@/features/auth';
-import { useAppStore } from '@/shared/store';
 import { formatPrice, truncateText } from '@/shared/lib';
+import { useAppStore } from '@/shared/store';
 import { Car } from '@/shared/types';
 import { Button, Card } from '@/shared/ui';
 import { ConfirmDeleteModal, useConfirmDelete } from '@/widgets/confirm-delete-modal';
@@ -28,14 +28,17 @@ export const CarItem = ({ car }: CarItemProps) => {
 
   return (
     <>
-      <Card className="overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
-        <Image
-          src={car.image}
-          alt={car.name}
-          width={400}
-          height={250}
-          className="w-full h-56 object-cover"
-        />
+      <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
+        <div className="aspect-[4/3] relative">
+          <Image
+            src={car.image}
+            alt={car.name}
+            fill
+            className="object-cover rounded-t"
+            sizes="(max-width: 768px) 100vw, 400px"
+            priority
+          />
+        </div>
 
         <div className="p-4 space-y-2">
           <h2 className="text-xl font-semibold">{car.name}</h2>

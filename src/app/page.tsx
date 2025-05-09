@@ -15,12 +15,17 @@ export default function HomePage() {
 
   return (
     <div className="container max-w-6xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6">Verfügbare Autos</h1>
+      {/* Центрированный заголовок */}
+      <div className="text-center mb-6">
+        <h1 className="text-2xl font-bold">Verfügbare Autos</h1>
+      </div>
 
-      <div className="mb-6">
+      {/* Центрированный фильтр */}
+      <div className="flex justify-center mb-8">
         <PriceFilter />
       </div>
 
+      {/* Состояния загрузки и ошибки */}
       {isLoading && <p className="text-center text-muted-foreground">Lade Autos...</p>}
 
       {isError && <p className="text-center text-red-500">Fehler beim Laden der Autos.</p>}
@@ -29,8 +34,10 @@ export default function HomePage() {
         <p className="text-center text-muted-foreground">Keine Autos gefunden.</p>
       )}
 
+      {/* Список машин */}
       {cars && cars.length > 0 && <CarList cars={cars} />}
 
+      {/* Модалки */}
       <CarFormModal />
       <LoginModal />
     </div>

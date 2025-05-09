@@ -23,8 +23,12 @@ export const useAuth = create<AuthState>()(
         try {
           const user = await authApi.login({ email, password });
           set({ user });
-        } catch (error) {
-          set({ error: 'Login fehlgeschlagen. Bitte überprüfen Sie Ihre Daten.' });
+        } catch (error: unknown) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Login fehlgeschlagen. Bitte überprüfen Sie Ihre Daten.';
+          set({ error: errorMessage });
           throw error;
         } finally {
           set({ isLoading: false });

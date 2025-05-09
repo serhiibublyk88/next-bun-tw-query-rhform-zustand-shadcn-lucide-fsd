@@ -1,9 +1,12 @@
 'use client';
 
-import { Button } from '@/shared/ui';
+import { User as UserIcon } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import { useAuth, useUser } from '@/features/auth';
 import { useAppStore } from '@/shared/store';
-import { usePathname } from 'next/navigation';
+import { Button } from '@/shared/ui';
 
 export const Header = () => {
   const user = useUser();
@@ -16,14 +19,17 @@ export const Header = () => {
 
   return (
     <header className="flex items-center justify-between p-4 shadow-md bg-white dark:bg-zinc-900">
-      <h1 className="text-xl font-bold">Autokatalog</h1>
+      <Link href="/" className="focus-visible:outline-none text-xl font-bold">
+        Autokatalog
+      </Link>
 
       <div className="flex items-center gap-4">
         {user ? (
           <>
-            <span className="text-sm text-muted-foreground">
-              {user.name} ({user.role.toLowerCase()})
-            </span>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <UserIcon className="w-4 h-4" aria-hidden="true" />
+              <span>{user.name}</span>
+            </div>
 
             {isAdmin && isMainPage && (
               <Button onClick={openAddCarModal} variant="default">

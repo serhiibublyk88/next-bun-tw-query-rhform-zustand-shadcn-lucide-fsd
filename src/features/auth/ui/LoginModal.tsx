@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog, DialogContent } from '@/shared/ui';
+import { Dialog, DialogContent, DialogTitle } from '@/shared/ui';
 import { LoginForm } from './LoginForm';
 import { useAppStore } from '@/shared/store';
 
@@ -9,7 +9,8 @@ export const LoginModal = () => {
 
   return (
     <Dialog open={isLoginModalOpen} onOpenChange={closeLoginModal}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="max-w-sm text-center">
+        <DialogTitle className="text-2xl font-semibold mb-6">Login</DialogTitle>
         <LoginForm />
       </DialogContent>
     </Dialog>

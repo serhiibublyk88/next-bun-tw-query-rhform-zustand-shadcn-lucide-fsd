@@ -1,17 +1,18 @@
+import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { carApi } from '@/shared/api';
 import { formatPrice } from '@/shared/lib';
-import { Card } from '@/shared/ui';
+import { Button, Card } from '@/shared/ui';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const id = (await params)?.id;
+type Params = { params: { id: string } };
 
-  if (!id) return { title: 'Auto nicht gefunden' };
-
-  const car = await carApi.getById(id).catch(() => null);
+export async function generateMetadata(props: Promise<Params>): Promise<Metadata> {
+  const { params } = await props;
+  const car = await carApi.getById(params.id).catch(() => null);
 
   return {
     title: car?.name ?? 'Auto nicht gefunden',
@@ -19,23 +20,27 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
   };
 }
 
-export default async function CarPage({ params }: { params: { id: string } }) {
-  const id = (await params)?.id;
-
-  if (!id) notFound();
-
-  const car = await carApi.getById(id).catch(() => null);
+export default async function CarPage(props: Promise<Params>) {
+  const { params } = await props;
+  const car = await carApi.getById(params.id).catch(() => null);
   if (!car) notFound();
 
   return (
     <div className="max-w-2xl mx-auto mt-10 px-4">
+      <Link href="/">
+        <Button variant="ghost" className="mb-4">
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Zurück
+        </Button>
+      </Link>
+
       <Card className="p-6">
-        <div className="w-full h-64 relative mb-6">
+        <div className="w-full max-w-xl mx-auto aspect-[4/3] relative mb-6">
           <Image
             src={car.image}
             alt={car.name}
             fill
-            sizes="(max-width: 768px) 100vw, 50vw"
+            sizes="(max-width: 768px) 100vw, 600px"
             className="object-cover rounded"
             priority
           />

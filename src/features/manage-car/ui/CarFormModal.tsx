@@ -9,6 +9,8 @@ import {
   Button,
   Dialog,
   DialogContent,
+  DialogDescription,
+  DialogTitle,
   Form,
   FormControl,
   FormField,
@@ -16,6 +18,7 @@ import {
   FormMessage,
   Input,
   Label,
+  Textarea,
 } from '@/shared/ui';
 
 import { carSchema, useManageCar, type CarFormData } from '@/features/manage-car';
@@ -31,6 +34,8 @@ export const CarFormModal = () => {
 
   const { addCar, editCar, isPending } = useManageCar();
 
+  const isEdit = isEditCarModalOpen && editableCar;
+
   const form = useForm<CarFormData>({
     resolver: zodResolver(carSchema),
     defaultValues: {
@@ -41,7 +46,7 @@ export const CarFormModal = () => {
     },
   });
 
-  // При открытии модалки редактирования — заполняем поля
+  // При открытии — заполняем или очищаем форму
   useEffect(() => {
     if (isEditCarModalOpen && editableCar) {
       form.reset({
@@ -50,10 +55,15 @@ export const CarFormModal = () => {
         image: editableCar.image,
         description: editableCar.description,
       });
+    } else if (isAddCarModalOpen) {
+      form.reset({
+        name: '',
+        price: 0,
+        image: '',
+        description: '',
+      });
     }
-  }, [isEditCarModalOpen, editableCar, form]);
-
-  const isEdit = isEditCarModalOpen && editableCar;
+  }, [isEditCarModalOpen, isAddCarModalOpen, editableCar, form]);
 
   const handleClose = () => {
     if (isEdit) closeEditCarModal();
@@ -62,10 +72,15 @@ export const CarFormModal = () => {
   };
 
   const onSubmit = async (data: CarFormData) => {
+    const parsedData = {
+      ...data,
+      price: Number(data.price),
+    };
+
     if (isEdit && editableCar) {
-      await editCar({ id: editableCar.id, data });
+      await editCar({ id: editableCar.id, data: parsedData });
     } else {
-      await addCar(data);
+      await addCar(parsedData);
     }
     handleClose();
   };
@@ -73,6 +88,11 @@ export const CarFormModal = () => {
   return (
     <Dialog open={isAddCarModalOpen || isEditCarModalOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
+        <DialogTitle>{isEdit ? 'Auto bearbeiten' : 'Auto hinzufügen'}</DialogTitle>
+        <DialogDescription className="sr-only">
+          Formular zur Verwaltung eines Autos
+        </DialogDescription>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -80,7 +100,7 @@ export const CarFormModal = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <Label>Name</Label>
+                  <Label>Model</Label>
                   <FormControl>
                     <Input placeholder="Mercedes Benz" {...field} />
                   </FormControl>
@@ -96,7 +116,13 @@ export const CarFormModal = () => {
                 <FormItem>
                   <Label>Preis</Label>
                   <FormControl>
-                    <Input type="number" placeholder="10000" {...field} />
+                    <Input
+                      type="number"
+                      inputMode="numeric"
+                      placeholder="10000"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -124,7 +150,7 @@ export const CarFormModal = () => {
                 <FormItem>
                   <Label>Beschreibung</Label>
                   <FormControl>
-                    <Input placeholder="Beschreibung..." {...field} />
+                    <Textarea placeholder="Beschreibung..." {...field} rows={4} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

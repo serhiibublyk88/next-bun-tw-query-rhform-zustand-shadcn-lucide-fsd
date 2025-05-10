@@ -2,8 +2,6 @@
 
 import { User as UserIcon } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-
 import { useAuth, useUser } from '@/features/auth';
 import { useAppStore } from '@/shared/store';
 import { Button } from '@/shared/ui';
@@ -11,11 +9,7 @@ import { Button } from '@/shared/ui';
 export const Header = () => {
   const user = useUser();
   const { logout } = useAuth();
-  const { openAddCarModal, openLoginModal } = useAppStore();
-  const pathname = usePathname();
-
-  const isAdmin = user?.role === 'ADMIN';
-  const isMainPage = pathname === '/';
+  const { openLoginModal } = useAppStore();
 
   return (
     <header className="flex items-center justify-between p-4 shadow-md bg-white dark:bg-zinc-900">
@@ -31,15 +25,7 @@ export const Header = () => {
               <span>{user.name}</span>
             </div>
 
-            {isAdmin && isMainPage && (
-              <Button onClick={openAddCarModal} variant="default">
-                Hinzufügen
-              </Button>
-            )}
-
-            <Button onClick={logout} variant="outline">
-              Logout
-            </Button>
+            <Button onClick={logout}>Logout</Button>
           </>
         ) : (
           <Button onClick={openLoginModal}>Login</Button>

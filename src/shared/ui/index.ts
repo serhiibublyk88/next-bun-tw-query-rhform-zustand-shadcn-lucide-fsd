@@ -7,3 +7,4 @@ export * from './toast';
 export * from './toaster';
 export * from './card';
 export * from './slider';
+export * from './textarea';

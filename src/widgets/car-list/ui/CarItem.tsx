@@ -3,10 +3,10 @@
 import { Pencil, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { useUser } from '@/features/auth';
 import { formatPrice, truncateText } from '@/shared/lib';
-import { useAppStore } from '@/shared/store';
 import { Car } from '@/shared/types';
 import { Button, Card } from '@/shared/ui';
 import { ConfirmDeleteModal, useConfirmDelete } from '@/widgets/confirm-delete-modal';
@@ -18,8 +18,8 @@ interface CarItemProps {
 export const CarItem = ({ car }: CarItemProps) => {
   const user = useUser();
   const isAdmin = user?.role === 'ADMIN';
+  const router = useRouter();
 
-  const { openEditCarModal } = useAppStore();
   const { isOpen, isLoading, open, close, confirmDelete } = useConfirmDelete();
 
   const handleDelete = async () => {
@@ -40,29 +40,45 @@ export const CarItem = ({ car }: CarItemProps) => {
           />
         </div>
 
-        <div className="p-4 space-y-2">
-          <h2 className="text-xl font-semibold">{car.name}</h2>
-          <p className="text-muted-foreground text-sm">
-            {truncateText(car.description ?? '', 100)}
-          </p>
+        <div className="p-4 flex flex-col justify-between h-[230px]">
+          <div>
+            <div className="flex items-start justify-between mb-2">
+              <h2 className="text-xl font-semibold">{car.name}</h2>
+              {isAdmin && (
+                <div className="flex gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => router.push(`/car/${car.id}?edit=1`)}
+                    className="hover:text-primary"
+                    title="Bearbeiten"
+                  >
+                    <Pencil size={16} />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => open(car.id)}
+                    className="hover:text-red-600"
+                    title="Löschen"
+                  >
+                    <Trash2 size={16} />
+                  </Button>
+                </div>
+              )}
+            </div>
 
-          <div className="flex items-center justify-between mt-2">
-            <span className="font-bold">{formatPrice(car.price)}</span>
-            <Link href={`/car/${car.id}`}>
-              <Button variant="secondary">Read more</Button>
-            </Link>
+            <p className="text-muted-foreground text-sm min-h-[72px]">
+              {truncateText(car.description ?? '', 100)}
+            </p>
           </div>
 
-          {isAdmin && (
-            <div className="flex items-center gap-2 mt-4">
-              <Button size="icon" variant="outline" onClick={() => openEditCarModal(car)}>
-                <Pencil size={16} />
-              </Button>
-              <Button size="icon" variant="destructive" onClick={() => open(car.id)}>
-                <Trash2 size={16} />
-              </Button>
-            </div>
-          )}
+          <div className="flex items-center justify-between mt-4">
+            <span className="font-bold">{formatPrice(car.price)}</span>
+            <Link href={`/car/${car.id}`}>
+              <Button variant="secondary">Mehr erfahren</Button>
+            </Link>
+          </div>
         </div>
       </Card>
 

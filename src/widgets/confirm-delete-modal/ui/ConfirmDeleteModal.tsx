@@ -1,6 +1,14 @@
 'use client';
 
-import { Dialog, DialogContent, DialogFooter, DialogHeader, Button } from '@/shared/ui';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/ui';
+import { Button } from '@/shared/ui';
 
 interface ConfirmDeleteModalProps {
   open: boolean;
@@ -19,11 +27,9 @@ export const ConfirmDeleteModal = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <h2 className="text-lg font-semibold">Wirklich löschen?</h2>
+          <DialogTitle>Wirklich löschen?</DialogTitle>
+          <DialogDescription>Diese Aktion kann nicht rückgängig gemacht werden.</DialogDescription>
         </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Diese Aktion kann nicht rückgängig gemacht werden.
-        </p>
 
         <DialogFooter className="pt-4">
           <Button variant="outline" onClick={onClose} disabled={isLoading}>

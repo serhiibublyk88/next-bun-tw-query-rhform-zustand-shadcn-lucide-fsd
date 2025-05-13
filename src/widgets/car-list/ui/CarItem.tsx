@@ -1,15 +1,18 @@
 'use client';
 
+import { useState } from 'react';
 import { Pencil, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 import { useUser } from '@/features/auth';
+import { carApi } from '@/shared/api';
 import { formatPrice, truncateText } from '@/shared/lib';
 import { Car } from '@/shared/types';
 import { Button, Card } from '@/shared/ui';
-import { ConfirmDeleteModal, useConfirmDelete } from '@/widgets/confirm-delete-modal';
+import { ConfirmDeleteModal } from '@/widgets/confirm-delete-modal';
+import { queryClient } from '@/shared/lib/queryClient';
 
 interface CarItemProps {
   car: Car;
@@ -20,10 +23,30 @@ export const CarItem = ({ car }: CarItemProps) => {
   const isAdmin = user?.role === 'ADMIN';
   const router = useRouter();
 
-  const { isOpen, isLoading, open, close, confirmDelete } = useConfirmDelete();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleDelete = async () => {
-    await confirmDelete(car.id);
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    router.push(`/car/${car.id}?edit=1`);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsConfirmOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      await carApi.delete(car.id);
+      queryClient.invalidateQueries({ queryKey: ['cars'] });
+    } finally {
+      setIsDeleting(false);
+      setIsConfirmOpen(false);
+    }
   };
 
   return (
@@ -49,7 +72,7 @@ export const CarItem = ({ car }: CarItemProps) => {
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => router.push(`/car/${car.id}?edit=1`)}
+                    onClick={handleEditClick}
                     className="hover:text-primary"
                     title="Bearbeiten"
                   >
@@ -58,7 +81,7 @@ export const CarItem = ({ car }: CarItemProps) => {
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => open(car.id)}
+                    onClick={handleDeleteClick}
                     className="hover:text-red-600"
                     title="Löschen"
                   >
@@ -83,10 +106,10 @@ export const CarItem = ({ car }: CarItemProps) => {
       </Card>
 
       <ConfirmDeleteModal
-        open={isOpen}
-        onClose={close}
-        onConfirm={handleDelete}
-        isLoading={isLoading}
+        open={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={handleDeleteConfirm}
+        isLoading={isDeleting}
       />
     </>
   );

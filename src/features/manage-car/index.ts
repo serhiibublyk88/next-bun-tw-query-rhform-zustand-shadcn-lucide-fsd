@@ -1,3 +1,3 @@
 export * from './model/useManageCar';
 export * from './model/carSchema';
-export * from './ui/CarFormModal';
+export * from './ui/CarForm';

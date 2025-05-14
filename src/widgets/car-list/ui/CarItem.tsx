@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import { useUser } from '@/features/auth';
 import { carApi } from '@/shared/api';
-import { formatPrice, truncateText } from '@/shared/lib';
+import { formatPrice } from '@/shared/lib';
 import { Car } from '@/shared/types';
 import { Button, Card } from '@/shared/ui';
 import { ConfirmDeleteModal } from '@/widgets/confirm-delete-modal';
@@ -54,8 +54,8 @@ export const CarItem = ({ car }: CarItemProps) => {
       <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
         <div className="aspect-[4/3] relative">
           <Image
-            src={car.image}
-            alt={car.name}
+            src={car.image ?? '/placeholder.jpg'}
+            alt={`${car.make} ${car.model}`}
             fill
             className="object-cover rounded-t"
             sizes="(max-width: 768px) 100vw, 400px"
@@ -66,7 +66,9 @@ export const CarItem = ({ car }: CarItemProps) => {
         <div className="p-4 flex flex-col justify-between h-[230px]">
           <div>
             <div className="flex items-start justify-between mb-2">
-              <h2 className="text-xl font-semibold">{car.name}</h2>
+              <h2 className="text-xl font-semibold">
+                {car.make} {car.model}
+              </h2>
               {isAdmin && (
                 <div className="flex gap-2">
                   <Button
@@ -91,8 +93,13 @@ export const CarItem = ({ car }: CarItemProps) => {
               )}
             </div>
 
-            <p className="text-muted-foreground text-sm min-h-[72px]">
-              {truncateText(car.description ?? '', 100)}
+            <p className="text-muted-foreground text-sm leading-relaxed">
+              {car.firstRegistration
+                ? `${car.firstRegistration.slice(0, 4)} · `
+                : 'Jahr unbekannt · '}
+              {car.mileage.toLocaleString()} km
+              <br />
+              {car.fuelType} · {car.transmission}
             </p>
           </div>
 

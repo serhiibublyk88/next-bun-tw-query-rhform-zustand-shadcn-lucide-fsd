@@ -2,22 +2,23 @@
 
 import { Plus } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 
 import { useUser } from '@/features/auth';
 import { PriceFilter } from '@/features/filter';
-import { useAppStore } from '@/shared/store';
 import { useCars } from '@/widgets/car-list';
 
 const CarList = dynamic(() => import('@/widgets/car-list').then((m) => m.CarList), {
   loading: () => <p className="text-center text-muted-foreground">Lade Autos...</p>,
 });
-const CarFormModal = dynamic(() => import('@/features/manage-car').then((m) => m.CarFormModal));
-const LoginModal = dynamic(() => import('@/features/auth').then((m) => m.LoginModal));
+
+// Если модалка авторизации ещё используется:
+const LoginModal = dynamic(() => import('@/features/auth/ui/LoginModal').then((m) => m.LoginModal));
 
 export default function HomePage() {
   const { cars, isLoading, isError } = useCars();
   const user = useUser();
-  const { openAddCarModal } = useAppStore();
+  const router = useRouter();
 
   const isAdmin = user?.role === 'ADMIN';
 
@@ -29,7 +30,7 @@ export default function HomePage() {
 
         {isAdmin && (
           <button
-            onClick={openAddCarModal}
+            onClick={() => router.push('/cars/create')}
             className="absolute right-0 rounded-full border border-input w-8 h-8 flex items-center justify-center 
             hover:bg-accent hover:text-accent-foreground transition"
             title="Auto hinzufügen"
@@ -55,8 +56,7 @@ export default function HomePage() {
       {/* Список машин */}
       {cars && cars.length > 0 && <CarList cars={cars} />}
 
-      {/* Модалки */}
-      <CarFormModal />
+      {/* Модалка авторизации */}
       <LoginModal />
     </div>
   );

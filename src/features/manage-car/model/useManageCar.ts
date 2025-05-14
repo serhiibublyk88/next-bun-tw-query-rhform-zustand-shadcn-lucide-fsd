@@ -1,29 +1,32 @@
-import { carApi } from '@/shared/api';
+// src/features/manage-car/model/useManageCar.ts
+
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CarFormData } from './carSchema';
+
+import { carApi } from '@/shared/api';
+import { QUERY_KEYS } from '@/shared/constants/queryKeys';
+import type { Car, CarFormValues } from '@/shared/types/car';
 
 export const useManageCar = () => {
   const queryClient = useQueryClient();
 
-  const addCarMutation = useMutation({
-    mutationFn: (data: CarFormData) => carApi.create(data),
+  const addCarMutation = useMutation<Car, Error, CarFormValues>({
+    mutationFn: (data) => carApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cars });
     },
   });
 
-  const editCarMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<CarFormData> }) =>
-      carApi.update(id, data),
+  const editCarMutation = useMutation<Car, Error, { id: string; data: Partial<CarFormValues> }>({
+    mutationFn: ({ id, data }) => carApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cars });
     },
   });
 
-  const deleteCarMutation = useMutation({
-    mutationFn: (id: string) => carApi.delete(id),
+  const deleteCarMutation = useMutation<void, Error, string>({
+    mutationFn: (id) => carApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cars'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.cars });
     },
   });
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { carSchema } from '@/features/manage-car';
 import { useManageCar } from '@/features/manage-car/model/useManageCar';
@@ -23,8 +23,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Textarea,
   Switch,
+  Textarea,
 } from '@/shared/ui';
 
 export const CarForm = () => {
@@ -105,7 +105,7 @@ export const CarForm = () => {
           )}
         />
 
-        {models.length > 0 && selectedMake !== 'Andere' ? (
+        {selectedMake && models.length > 0 ? (
           <FormField
             control={form.control}
             name="model"

@@ -9,10 +9,10 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/features/auth';
 import { carApi } from '@/shared/api';
 import { formatPrice } from '@/shared/lib';
+import { queryClient } from '@/shared/lib/queryClient';
 import { Car } from '@/shared/types';
 import { Button, Card } from '@/shared/ui';
 import { ConfirmDeleteModal } from '@/widgets/confirm-delete-modal';
-import { queryClient } from '@/shared/lib/queryClient';
 
 interface CarItemProps {
   car: Car;
@@ -51,22 +51,22 @@ export const CarItem = ({ car }: CarItemProps) => {
 
   return (
     <>
-      <Card className="w-full max-w-lg mx-auto overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-200">
+      <Card className="w-full max-w-lg mx-auto overflow-hidden rounded-xl shadow-md hover:shadow-xl transition">
         <div className="aspect-[4/3] relative">
           <Image
             src={car.image ?? '/placeholder.jpg'}
             alt={`${car.make} ${car.model}`}
             fill
-            className="object-cover rounded-t"
+            className="object-cover rounded-t-xl"
             sizes="(max-width: 768px) 100vw, 400px"
             priority
           />
         </div>
 
-        <div className="p-4 flex flex-col justify-between h-[230px]">
+        <div className="p-4 flex flex-col justify-between h-[190px]">
           <div>
             <div className="flex items-start justify-between mb-2">
-              <h2 className="text-xl font-semibold">
+              <h2 className="text-lg font-bold">
                 {car.make} {car.model}
               </h2>
               {isAdmin && (
@@ -93,20 +93,32 @@ export const CarItem = ({ car }: CarItemProps) => {
               )}
             </div>
 
-            <p className="text-muted-foreground text-sm leading-relaxed">
-              {car.firstRegistration
-                ? `${car.firstRegistration.slice(0, 4)} · `
-                : 'Jahr unbekannt · '}
-              {car.mileage.toLocaleString()} km
-              <br />
-              {car.fuelType} · {car.transmission}
-            </p>
+            <div className="space-y-1">
+              {/* Год + пробег */}
+              <div className="text-base font-semibold">
+                {car.firstRegistration ? `${car.firstRegistration.slice(0, 4)} · ` : ''}
+                {car.mileage.toLocaleString()} km
+              </div>
+
+              {/* Объем + топливо */}
+              <div className="text-sm text-muted-foreground">
+                {car.engineCapacity ? `${(car.engineCapacity / 1000).toFixed(1)} ` : ''}
+                {car.fuelType}
+              </div>
+
+              {/* КПП + привод */}
+              <div className="text-sm text-muted-foreground">
+                {car.transmission} · {car.drivetrain}
+              </div>
+            </div>
           </div>
 
           <div className="flex items-center justify-between mt-4">
-            <span className="font-bold">{formatPrice(car.price)}</span>
+            <span className="font-bold text-lg">{formatPrice(car.price)}</span>
             <Link href={`/car/${car.id}`}>
-              <Button variant="secondary">Mehr erfahren</Button>
+              <Button variant="secondary" size="sm">
+                Mehr erfahren
+              </Button>
             </Link>
           </div>
         </div>

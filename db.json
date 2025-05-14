@@ -185,7 +185,7 @@
       "seats": 2,
       "doors": 2,
       "condition": "Oldtimer",
-      "price": 1,
+      "price": 100000,
       "firstRegistration": "1980-01",
       "mileage": 100000,
       "fuelType": "Benzin",
